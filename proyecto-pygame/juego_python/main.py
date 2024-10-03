@@ -26,11 +26,18 @@ for i in range(7):
 imagen_pistola = pygame.image.load(f"proyecto-pygame//juego_python//assets//imagenes//character//player//weapons//pistolagame.png")  
 imagen_pistola =  scalar_igm(imagen_pistola, constantes.SCALA_ARMA)
 
+#Balas 
+imagen_balas = pygame.image.load(f"proyecto-pygame//juego_python//assets//imagenes//character//player//weapons//laser1.png")  
+imagen_balas =  scalar_igm(imagen_balas, constantes.SCALA_BALA)
+
 #Crear un jugador de la clase personaje 
 jugador = Personaje( 50, 50, animaciones)
 
 #Crear un arma de la clase weporn 
-pistola = Weapons(imagen_pistola)
+pistola = Weapons(imagen_pistola, imagen_balas)
+
+# crear un grupo de sprite
+grupo_balas = pygame.sprite.Group()
 
 
 #Definir variables de movimiento del jugador 
@@ -71,13 +78,23 @@ while run == True:
     jugador.update() 
     
     #Actualiza el estado del arma 
-    pistola.update(jugador)
+    bala = pistola.update(jugador)
+    if bala:
+        grupo_balas.add(bala)
+    for bala in grupo_balas:
+        bala.update()
+    print(grupo_balas)    
+    
     # print(f"{delta_x}, {delta_y}") #Pruebas de controles y coordenadas  
                 
     # Dibujar al jugador  en la pantalla
     jugador.drawn(ventana)
     # Dibujar el arma en la pantalla 
     pistola.drawn(ventana)
+    
+    # dibujar balas
+    for bala in grupo_balas:
+        bala.drawn(ventana)
     
     
     # Para cerrar el juego 
@@ -95,7 +112,7 @@ while run == True:
             if event.key == pygame.K_s:
                 mover_abajo = True  
                 
-        # Evento cuando sulete tecla
+        # Evento cuando suelte tecla
         if  event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 mover_izquierda = False
